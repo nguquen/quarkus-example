@@ -43,7 +43,8 @@ dependencies {
 
     // gatling
     gatling group: 'com.github.phisgr', name: 'gatling-grpc', version: "$gatlingGrpcVersion"
-    gatling("com.github.phisgr:gatling-grpc-kt:0.15.1")
+    gatling group: 'com.github.phisgr', name: 'gatling-grpc-kt', version: "$gatlingGrpcKtVersion"
+    gatling group: 'com.google.protobuf', name: 'protobuf-java', version: "$gatlingProtobufVersion"
 }
 
 group 'com.leapxpert'

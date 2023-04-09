@@ -33,7 +33,7 @@ public class UserManagementSimulation extends Simulation {
 
   {
     setUp(
-        scenario.injectOpen(atOnceUsers(1))
+        scenario.injectOpen(atOnceUsers(10))
     ).protocols(grpcProtocol);
   }
 }
