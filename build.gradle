@@ -14,7 +14,8 @@ dependencies {
 
     // rest
     implementation 'io.quarkus:quarkus-resteasy-reactive'
-    implementation("io.quarkus:quarkus-smallrye-openapi")
+    implementation 'io.quarkus:quarkus-resteasy-reactive-jackson'
+    implementation 'io.quarkus:quarkus-smallrye-openapi'
 
     // db
     implementation("io.quarkus:quarkus-hibernate-orm-panache")
