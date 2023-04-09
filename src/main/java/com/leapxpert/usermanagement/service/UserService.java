@@ -1,7 +1,7 @@
 package com.leapxpert.usermanagement.service;
 
 import com.leapxpert.usermanagement.repository.UserRepository;
-import com.leapxpert.usermanagement.service.dto.User;
+import com.leapxpert.usermanagement.service.dto.UserDto;
 import com.leapxpert.usermanagement.service.exception.ServiceException;
 import com.leapxpert.usermanagement.service.mapper.UserMapper;
 import java.util.List;
@@ -22,34 +22,34 @@ public class UserService {
   private final UserRepository userRepository;
   private final UserMapper userMapper;
 
-  public List<User> findAll() {
-    return this.userMapper.toDomainList(userRepository.findAll().list());
+  public List<UserDto> findAll() {
+    return this.userMapper.entityToDomainList(userRepository.findAll().list());
   }
 
-  public Optional<User> findById(@NonNull Integer customerId) {
-    return userRepository.findByIdOptional(customerId).map(userMapper::toDomain);
+  public Optional<UserDto> findById(@NonNull Integer customerId) {
+    return userRepository.findByIdOptional(customerId).map(userMapper::entityToDomain);
   }
 
   @Transactional
-  public void save(@Valid User user) {
-    log.debug("Saving User: {}", user);
-    var entity = userMapper.toEntity(user);
+  public void save(@Valid UserDto userDto) {
+    log.debug("Saving User: {}", userDto);
+    var entity = userMapper.toEntity(userDto);
     userRepository.persist(entity);
-    userMapper.updateDomainFromEntity(entity, user);
+    userMapper.updateDomainFromEntity(entity, userDto);
   }
 
   @Transactional
-  public void update(@Valid User user) {
-    log.debug("Updating User: {}", user);
-    if (Objects.isNull(user.getId())) {
+  public void update(@Valid UserDto userDto) {
+    log.debug("Updating User: {}", userDto);
+    if (Objects.isNull(userDto.getId())) {
       throw new ServiceException("User does not have a userId");
     }
 
-    var entity = userRepository.findByIdOptional(user.getId())
-        .orElseThrow(() -> new ServiceException("No User found for userId[%s]", user.getId()));
+    var entity = userRepository.findByIdOptional(userDto.getId())
+        .orElseThrow(() -> new ServiceException("No User found for userId[%s]", userDto.getId()));
 
-    userMapper.updateEntityFromDomain(user, entity);
+    userMapper.updateEntityFromDomain(userDto, entity);
     userRepository.persist(entity);
-    userMapper.updateDomainFromEntity(entity, user);
+    userMapper.updateDomainFromEntity(entity, userDto);
   }
 }

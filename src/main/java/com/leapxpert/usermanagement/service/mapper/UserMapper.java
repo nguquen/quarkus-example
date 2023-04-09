@@ -1,23 +1,31 @@
 package com.leapxpert.usermanagement.service.mapper;
 
+import com.leapxpert.usermanagement.grpc.User;
 import com.leapxpert.usermanagement.repository.entity.UserEntity;
-import com.leapxpert.usermanagement.service.dto.User;
+import com.leapxpert.usermanagement.service.dto.UserDto;
 import java.util.List;
-import org.mapstruct.InheritInverseConfiguration;
+import org.mapstruct.CollectionMappingStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
-@Mapper(componentModel = "cdi")
+@Mapper(componentModel = "cdi", collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED)
 public interface UserMapper {
 
-  List<User> toDomainList(List<UserEntity> entities);
+  List<UserDto> entityToDomainList(List<UserEntity> entities);
 
-  User toDomain(UserEntity entity);
+  UserDto entityToDomain(UserEntity entity);
 
-  @InheritInverseConfiguration(name = "toDomain")
-  UserEntity toEntity(User domain);
+  UserDto protoToDomain(User user);
 
-  void updateEntityFromDomain(User domain, @MappingTarget UserEntity entity);
+  List<UserDto> protoToDomainList(List<User> users);
 
-  void updateDomainFromEntity(UserEntity entity, @MappingTarget User domain);
+  UserEntity toEntity(UserDto domain);
+
+  User toProto(UserDto domain);
+
+  List<User> toProtoList(List<UserDto> domains);
+
+  void updateEntityFromDomain(UserDto domain, @MappingTarget UserEntity entity);
+
+  void updateDomainFromEntity(UserEntity entity, @MappingTarget UserDto domain);
 }

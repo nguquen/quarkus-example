@@ -1,7 +1,7 @@
 package com.leapxpert.usermanagement.resource;
 
 import com.leapxpert.usermanagement.service.UserService;
-import com.leapxpert.usermanagement.service.dto.User;
+import com.leapxpert.usermanagement.service.dto.UserDto;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -32,16 +32,16 @@ public class UserResource {
   }
 
   @POST
-  public Response create(@NotNull @Valid User user) {
-    userService.save(user);
-    return Response.ok(user).build();
+  public Response create(@NotNull @Valid UserDto userDto) {
+    userService.save(userDto);
+    return Response.ok(userDto).build();
   }
 
   @PUT
   @Path("/{userId}")
-  public Response update(@PathParam("userId") Integer userId, @NotNull @Valid User user) {
-    user.setId(userId);
-    userService.update(user);
-    return Response.ok(user).build();
+  public Response update(@PathParam("userId") Integer userId, @NotNull @Valid UserDto userDto) {
+    userDto.setId(userId);
+    userService.update(userDto);
+    return Response.ok(userDto).build();
   }
 }

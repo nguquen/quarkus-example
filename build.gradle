@@ -17,6 +17,9 @@ dependencies {
     implementation 'io.quarkus:quarkus-resteasy-reactive-jackson'
     implementation 'io.quarkus:quarkus-smallrye-openapi'
 
+    // grpc
+    implementation 'io.quarkus:quarkus-grpc'
+
     // db
     implementation("io.quarkus:quarkus-hibernate-orm-panache")
     annotationProcessor("io.quarkus:quarkus-panache-common")
@@ -31,6 +34,7 @@ dependencies {
     // https://mvnrepository.com/artifact/org.mapstruct/mapstruct
     implementation group: 'org.mapstruct', name: 'mapstruct', version: "$mapstructVersion"
     annotationProcessor group: 'org.mapstruct', name: 'mapstruct-processor', version: "$mapstructVersion"
+    annotationProcessor group: 'no.entur.mapstruct.spi', name: 'protobuf-spi-impl', version: "$mapstructProtobufSpiVersion"
 
     // test
     testImplementation 'io.quarkus:quarkus-junit5'
