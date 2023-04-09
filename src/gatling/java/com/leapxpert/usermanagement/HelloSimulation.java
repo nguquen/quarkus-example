@@ -23,7 +23,7 @@ public class HelloSimulation extends Simulation {
 
   {
     setUp(
-        scenario.injectOpen(atOnceUsers(100))
+        scenario.injectOpen(atOnceUsers(10))
     ).protocols(httpProtocol);
   }
 }

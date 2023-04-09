@@ -40,6 +40,10 @@ dependencies {
     // test
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
+
+    // gatling
+    gatling group: 'com.github.phisgr', name: 'gatling-grpc', version: "$gatlingGrpcVersion"
+    gatling("com.github.phisgr:gatling-grpc-kt:0.15.1")
 }
 
 group 'com.leapxpert'

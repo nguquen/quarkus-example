@@ -12,6 +12,9 @@
 	<!-- uncomment and set to TRACE to log all HTTP requests -->
 	<logger name="io.gatling.http.engine.response" level="TRACE" />
 
+	<!-- uncomment and set to TRACE to log all GRPC requests -->
+  <logger name="com.github.phisgr.gatling.grpc" level="TRACE" />
+
 	<!-- uncomment to log WebSocket events -->
     <!--<logger name="io.gatling.http.action.ws.fsm" level="DEBUG" />-->
 

@@ -9,9 +9,11 @@ import io.grpc.stub.StreamObserver;
 import io.quarkus.grpc.GrpcService;
 import io.smallrye.common.annotation.Blocking;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @GrpcService
 @AllArgsConstructor
+@Slf4j
 public class UserManagementService extends UserManagementImplBase {
 
   private final UserService userService;
@@ -22,6 +24,7 @@ public class UserManagementService extends UserManagementImplBase {
   @Blocking
   public void getUsers(GetUsersRequest request, StreamObserver<UsersResponse> responseObserver) {
     var users = userService.findAll();
+    log.info("getUsers invoked");
 
     responseObserver.onNext(UsersResponse.newBuilder()
         .addAllUsers(userMapper.toProtoList(users))
