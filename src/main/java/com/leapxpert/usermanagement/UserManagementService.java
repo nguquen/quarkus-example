@@ -1,7 +1,9 @@
 package com.leapxpert.usermanagement;
 
+import com.leapxpert.usermanagement.grpc.CreateUserRequest;
 import com.leapxpert.usermanagement.grpc.GetUsersRequest;
 import com.leapxpert.usermanagement.grpc.UserManagementGrpc.UserManagementImplBase;
+import com.leapxpert.usermanagement.grpc.UserResponse;
 import com.leapxpert.usermanagement.grpc.UsersResponse;
 import com.leapxpert.usermanagement.service.UserService;
 import com.leapxpert.usermanagement.service.mapper.UserMapper;
@@ -28,6 +30,19 @@ public class UserManagementService extends UserManagementImplBase {
 
     responseObserver.onNext(UsersResponse.newBuilder()
         .addAllUsers(userMapper.toProtoList(users))
+        .build());
+    responseObserver.onCompleted();
+  }
+
+  @Override
+  @Blocking
+  public void createUser(CreateUserRequest request, StreamObserver<UserResponse> responseObserver) {
+    var userDto = userMapper.protoToDomain(request.getUser());
+    log.info("createUser invoked: {}", userDto);
+    userService.save(userDto);
+
+    responseObserver.onNext(UserResponse.newBuilder()
+        .setUser(userMapper.toProto(userDto))
         .build());
     responseObserver.onCompleted();
   }

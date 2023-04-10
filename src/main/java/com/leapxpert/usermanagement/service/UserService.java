@@ -33,7 +33,7 @@ public class UserService {
 
   @Transactional
   public void save(@Valid UserDto userDto) {
-    log.debug("Saving User: {}", userDto);
+    log.info("Saving User: {}", userDto);
     userDto.setId(ObjectId.get().toHexString());
     var entity = userMapper.toEntity(userDto);
     userRepository.persist(entity);
@@ -42,7 +42,7 @@ public class UserService {
 
   @Transactional
   public void update(@Valid UserDto userDto) {
-    log.debug("Updating User: {}", userDto);
+    log.info("Updating User: {}", userDto);
     if (Objects.isNull(userDto.getId())) {
       throw new ServiceException("User does not have a userId");
     }

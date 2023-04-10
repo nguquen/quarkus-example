@@ -8,17 +8,26 @@ package usermanagement;
 
 service UserManagement {
   rpc getUsers (GetUsersRequest) returns (UsersResponse) {}
+  rpc createUser (CreateUserRequest) returns (UserResponse) {}
 }
 
 message GetUsersRequest {
 }
 
+message CreateUserRequest {
+  User user = 1;
+}
+
 message User {
-  int32 id = 1;
+  string id = 1;
   string firstName = 2;
   string lastName = 3;
   string email = 4;
   string phone = 5;
+}
+
+message UserResponse {
+  User user = 1;
 }
 
 message UsersResponse {
