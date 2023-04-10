@@ -25,6 +25,7 @@ dependencies {
     annotationProcessor("io.quarkus:quarkus-panache-common")
     implementation("io.quarkus:quarkus-hibernate-validator")
     implementation("io.quarkus:quarkus-mongodb-panache")
+    implementation("io.quarkus:quarkus-liquibase-mongodb")
 
     // https://mvnrepository.com/artifact/org.projectlombok/lombok
     compileOnly group: 'org.projectlombok', name: 'lombok', version: "$lombokVersion"
