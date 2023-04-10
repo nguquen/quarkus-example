@@ -10,6 +10,7 @@ import com.leapxpert.usermanagement.service.mapper.UserMapper;
 import io.grpc.stub.StreamObserver;
 import io.quarkus.grpc.GrpcService;
 import io.smallrye.common.annotation.Blocking;
+import javax.validation.ConstraintViolationException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,13 +38,19 @@ public class UserManagementService extends UserManagementImplBase {
   @Override
   @Blocking
   public void createUser(CreateUserRequest request, StreamObserver<UserResponse> responseObserver) {
-    var userDto = userMapper.protoToDomain(request.getUser());
-    log.info("createUser invoked: {}", userDto);
-    userService.save(userDto);
+    try {
+      var userDto = userMapper.protoToDomain(request.getUser());
+      log.info("createUser invoked: {}", userDto);
+      userService.save(userDto);
 
-    responseObserver.onNext(UserResponse.newBuilder()
-        .setUser(userMapper.toProto(userDto))
-        .build());
-    responseObserver.onCompleted();
+      responseObserver.onNext(UserResponse.newBuilder()
+          .setUser(userMapper.toProto(userDto))
+          .build());
+    } catch (ConstraintViolationException e) {
+      //TODO: handle exception
+      log.error("createUser::error", e);
+    } finally {
+      responseObserver.onCompleted();
+    }
   }
 }
