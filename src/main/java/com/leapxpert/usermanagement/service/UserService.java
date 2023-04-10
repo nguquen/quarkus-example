@@ -13,6 +13,7 @@ import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 
 @ApplicationScoped
 @AllArgsConstructor
@@ -26,13 +27,14 @@ public class UserService {
     return this.userMapper.entityToDomainList(userRepository.findAll().list());
   }
 
-  public Optional<UserDto> findById(@NonNull Integer customerId) {
-    return userRepository.findByIdOptional(customerId).map(userMapper::entityToDomain);
+  public Optional<UserDto> findById(@NonNull String userId) {
+    return userRepository.findByIdOptional(new ObjectId(userId)).map(userMapper::entityToDomain);
   }
 
   @Transactional
   public void save(@Valid UserDto userDto) {
     log.debug("Saving User: {}", userDto);
+    userDto.setId(ObjectId.get().toHexString());
     var entity = userMapper.toEntity(userDto);
     userRepository.persist(entity);
     userMapper.updateDomainFromEntity(entity, userDto);
@@ -45,11 +47,11 @@ public class UserService {
       throw new ServiceException("User does not have a userId");
     }
 
-    var entity = userRepository.findByIdOptional(userDto.getId())
+    var entity = userRepository.findByIdOptional(new ObjectId(userDto.getId()))
         .orElseThrow(() -> new ServiceException("No User found for userId[%s]", userDto.getId()));
 
     userMapper.updateEntityFromDomain(userDto, entity);
-    userRepository.persist(entity);
+    userRepository.update(entity);
     userMapper.updateDomainFromEntity(entity, userDto);
   }
 }

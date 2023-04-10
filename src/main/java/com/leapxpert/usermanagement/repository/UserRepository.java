@@ -1,10 +1,10 @@
 package com.leapxpert.usermanagement.repository;
 
 import com.leapxpert.usermanagement.repository.entity.UserEntity;
-import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
+import io.quarkus.mongodb.panache.PanacheMongoRepository;
 import javax.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class UserRepository implements PanacheRepositoryBase<UserEntity, Integer> {
+public class UserRepository implements PanacheMongoRepository<UserEntity> {
 
 }

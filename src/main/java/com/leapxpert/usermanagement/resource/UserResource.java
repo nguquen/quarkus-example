@@ -39,7 +39,7 @@ public class UserResource {
 
   @PUT
   @Path("/{userId}")
-  public Response update(@PathParam("userId") Integer userId, @NotNull @Valid UserDto userDto) {
+  public Response update(@PathParam("userId") String userId, @NotNull @Valid UserDto userDto) {
     userDto.setId(userId);
     userService.update(userDto);
     return Response.ok(userDto).build();

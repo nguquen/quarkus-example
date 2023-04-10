@@ -1,37 +1,25 @@
 package com.leapxpert.usermanagement.repository.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import io.quarkus.mongodb.panache.common.MongoEntity;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import lombok.Data;
+import org.bson.types.ObjectId;
 
-@Entity(name = "User")
-@Table(schema = "leapxpert", name = "user")
+@MongoEntity(collection = "User")
 @Data
 public class UserEntity {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "id")
-  private Integer id;
+  private ObjectId id;
 
-  @Column(name = "first_name")
   @NotEmpty
   private String firstName;
 
-  @Column(name = "last_name")
   @NotEmpty
   private String lastName;
 
-  @Column(name = "email")
   @Email
   private String email;
 
-  @Column(name = "phone")
   private String phone;
 }
