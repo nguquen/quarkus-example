@@ -18,7 +18,7 @@ import io.grpc.Status.Code;
 public class UserManagementSimulation extends Simulation {
 
   StaticGrpcProtocol grpcProtocol = grpc(
-      ManagedChannelBuilder.forAddress("localhost", 9000).usePlaintext()
+      ManagedChannelBuilder.forAddress("localhost", 8080).usePlaintext()
   ).shareChannel();
 
   ChainBuilder getUsers = exec(
