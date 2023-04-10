@@ -2,6 +2,7 @@ package com.leapxpert.usermanagement.resource;
 
 import com.leapxpert.usermanagement.service.UserService;
 import com.leapxpert.usermanagement.service.dto.UserDto;
+import io.smallrye.mutiny.Uni;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -27,21 +28,19 @@ public class UserResource {
 
 
   @GET
-  public Response list() {
-    return Response.ok(userService.findAll()).build();
+  public Uni<Response> list() {
+    return userService.findAll().map(result -> Response.ok(result).build());
   }
 
   @POST
-  public Response create(@NotNull @Valid UserDto userDto) {
-    userService.save(userDto);
-    return Response.ok(userDto).build();
+  public Uni<Response> create(@NotNull @Valid UserDto userDto) {
+    return userService.save(userDto).map(result -> Response.ok(result).build());
   }
 
   @PUT
   @Path("/{userId}")
-  public Response update(@PathParam("userId") Integer userId, @NotNull @Valid UserDto userDto) {
+  public Uni<Response> update(@PathParam("userId") Integer userId, @NotNull @Valid UserDto userDto) {
     userDto.setId(userId);
-    userService.update(userDto);
-    return Response.ok(userDto).build();
+    return userService.save(userDto).map(result -> Response.ok(result).build());
   }
 }
