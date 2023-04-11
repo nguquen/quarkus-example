@@ -1,56 +1,47 @@
 package com.leapxpert.usermanagement;
 
+import com.google.rpc.Code;
 import com.leapxpert.usermanagement.grpc.CreateUserRequest;
+import com.leapxpert.usermanagement.grpc.Error;
 import com.leapxpert.usermanagement.grpc.GetUsersRequest;
-import com.leapxpert.usermanagement.grpc.UserManagementGrpc.UserManagementImplBase;
+import com.leapxpert.usermanagement.grpc.UserManagement;
 import com.leapxpert.usermanagement.grpc.UserResponse;
 import com.leapxpert.usermanagement.grpc.UsersResponse;
 import com.leapxpert.usermanagement.service.UserService;
 import com.leapxpert.usermanagement.service.mapper.UserMapper;
-import io.grpc.stub.StreamObserver;
 import io.quarkus.grpc.GrpcService;
-import io.smallrye.common.annotation.Blocking;
-import javax.validation.ConstraintViolationException;
+import io.smallrye.mutiny.Uni;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @GrpcService
 @AllArgsConstructor
 @Slf4j
-public class UserManagementService extends UserManagementImplBase {
+public class UserManagementService implements UserManagement {
 
   private final UserService userService;
   private final UserMapper userMapper;
 
-
   @Override
-  @Blocking
-  public void getUsers(GetUsersRequest request, StreamObserver<UsersResponse> responseObserver) {
-    var users = userService.findAll();
+  public Uni<UsersResponse> getUsers(GetUsersRequest request) {
     log.info("getUsers invoked");
 
-    responseObserver.onNext(UsersResponse.newBuilder()
-        .addAllUsers(userMapper.toProtoList(users))
-        .build());
-    responseObserver.onCompleted();
+    return userService.findAll().map(
+        users -> UsersResponse.newBuilder().addAllUsers(userMapper.toProtoList(users)).build());
   }
 
   @Override
-  @Blocking
-  public void createUser(CreateUserRequest request, StreamObserver<UserResponse> responseObserver) {
-    try {
-      var userDto = userMapper.protoToDomain(request.getUser());
-      log.info("createUser invoked: {}", userDto);
-      userService.save(userDto);
+  public Uni<UserResponse> createUser(CreateUserRequest request) {
+    var userDto = userMapper.protoToDomain(request.getUser());
+    log.info("createUser invoked: {}", userDto);
 
-      responseObserver.onNext(UserResponse.newBuilder()
-          .setUser(userMapper.toProto(userDto))
-          .build());
-    } catch (ConstraintViolationException e) {
-      //TODO: handle exception
-      log.error("createUser::error", e);
-    } finally {
-      responseObserver.onCompleted();
-    }
+    return userService.save(userDto)
+        .map(user -> UserResponse.newBuilder().setUser(userMapper.toProto(user)).build())
+        .onFailure().recoverWithItem(throwable -> UserResponse.newBuilder()
+            .setError(Error.newBuilder()
+                .setCode(Code.INTERNAL.getNumber())
+                .setMessage(throwable.getMessage())
+                .build())
+            .build());
   }
 }
