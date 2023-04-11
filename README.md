@@ -1,56 +1,112 @@
-# usermanagement
+## Branches
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+**master** / **postgres-reactive**: reactive paradigm with quarkus-hibernate-reactive-panache extension
 
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
+**postgres**: imperative paradigm with quarkus-hibernate-orm-panache extension
 
-## Running the application in dev mode
+**mongo-reactive**: reactive paradigm with quarkus-mongodb-panache extension
 
-You can run your application in dev mode that enables live coding using:
-```shell script
-./gradlew quarkusDev
+**mongo**: imperative paradigm with quarkus-mongodb-panache extension
+
+## Stack
+- reactive programming
+- java: 17
+- framework: quarkus 2
+- database: postgresql / mongodb
+- migration: flyway / liquibase
+- kafka: https://quarkus.io/guides/kafka
+- in-memory cache: https://quarkus.io/guides/cache
+- unit-test: >= 60%
+- load-test: gatling / k6. Can start with simple load-testing scenarios from day-1
+
+## Structure
+
+```
+src
+├── gatling
+│   ├── java
+│   │   ├── Engine.java
+│   │   ├── IDEPathHelper.java
+│   │   ├── Recorder.java
+│   │   └── com
+│   │       └── leapxpert
+│   │           └── usermanagement
+│   │               ├── HelloSimulation.java
+│   │               └── UserManagementSimulation.java
+│   └── resources
+│       ├── gatling.conf
+│       ├── logback.xml
+│       └── recorder.conf
+├── main
+│   ├── docker
+│   │   ├── Dockerfile.jvm
+│   │   ├── Dockerfile.legacy-jar
+│   │   ├── Dockerfile.native
+│   │   └── Dockerfile.native-micro
+│   ├── java
+│   │   └── com
+│   │       └── leapxpert
+│   │           └── usermanagement
+│   │               ├── FlywayMigration.java
+│   │               ├── UserManagementService.java
+│   │               ├── repository
+│   │               │   ├── UserRepository.java
+│   │               │   └── entity
+│   │               │       └── UserEntity.java
+│   │               ├── resource
+│   │               │   ├── HelloResource.java
+│   │               │   └── UserResource.java
+│   │               └── service
+│   │                   ├── UserService.java
+│   │                   ├── dto
+│   │                   │   └── UserDto.java
+│   │                   ├── exception
+│   │                   │   └── ServiceException.java
+│   │                   └── mapper
+│   │                       └── UserMapper.java
+│   ├── proto
+│   │   └── usermanagement.proto
+│   └── resources
+│       ├── META-INF
+│       │   └── resources
+│       │       └── index.html
+│       ├── application.properties
+│       └── db
+│           └── migration
+│               └── V1__user_table_create.sql
+├── native-test
+│   └── java
+│       └── com
+│           └── leapxpert
+│               └── usermanagement
+│                   └── resource
+│                       └── HelloResourceIT.java
+└── test
+    └── java
+        └── com
+            └── leapxpert
+                └── usermanagement
+                    ├── resource
+                    │   └── HelloResourceTest.java
+                    └── service
+                        └── UserServiceTest.java
 ```
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/q/dev/.
+**src/main/java**
 
-## Packaging and running the application
+- **/repository: repositories to access database
+- **/repository/entity: database entities
+- **/service: domain services
+- **/service/dto: domain dtos
+- **/service/exception: service exceptions
+- **/service/mapper: mapper between dto <-> entity, dto <-> protobuf message
+- **/resource: REST resources
 
-The application can be packaged using:
-```shell script
-./gradlew build
-```
-It produces the `quarkus-run.jar` file in the `build/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `build/quarkus-app/lib/` directory.
+**src/gatling**
 
-The application is now runnable using `java -jar build/quarkus-app/quarkus-run.jar`.
+- contains load-testing scenarios
 
-If you want to build an _über-jar_, execute the following command:
-```shell script
-./gradlew build -Dquarkus.package.type=uber-jar
-```
+**src/test**
 
-The application, packaged as an _über-jar_, is now runnable using `java -jar build/*-runner.jar`.
+- contains unit-tests
 
-## Creating a native executable
-
-You can create a native executable using: 
-```shell script
-./gradlew build -Dquarkus.package.type=native
-```
-
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using: 
-```shell script
-./gradlew build -Dquarkus.package.type=native -Dquarkus.native.container-build=true
-```
-
-You can then execute your native executable with: `./build/usermanagement-1.0.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult https://quarkus.io/guides/gradle-tooling.
-
-## Provided Code
-
-### RESTEasy Reactive
-
-Easily start your Reactive RESTful Web Services
-
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
