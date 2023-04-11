@@ -43,12 +43,14 @@ public class UserService {
       throw new ServiceException("User does not have a userId");
     }
 
-    return userRepository.findById(new ObjectId(userDto.getId())).flatMap(entity -> {
-      if (entity == null) {
-        throw new ServiceException("No User found for userId[%s]", userDto.getId());
-      }
-      userMapper.updateEntityFromDomain(userDto, entity);
-      return userRepository.persist(entity);
-    }).map(userMapper::entityToDomain);
+    return userRepository
+        .findById(new ObjectId(userDto.getId()))
+        .onItem()
+        .ifNull().failWith(new ServiceException("No User found for userId[%s]", userDto.getId()))
+        .flatMap(entity -> {
+          userMapper.updateEntityFromDomain(userDto, entity);
+          return userRepository.update(entity);
+        })
+        .map(userMapper::entityToDomain);
   }
 }

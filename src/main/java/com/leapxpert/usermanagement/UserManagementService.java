@@ -4,6 +4,7 @@ import com.google.rpc.Code;
 import com.leapxpert.usermanagement.grpc.CreateUserRequest;
 import com.leapxpert.usermanagement.grpc.Error;
 import com.leapxpert.usermanagement.grpc.GetUsersRequest;
+import com.leapxpert.usermanagement.grpc.UpdateUserRequest;
 import com.leapxpert.usermanagement.grpc.UserManagement;
 import com.leapxpert.usermanagement.grpc.UserResponse;
 import com.leapxpert.usermanagement.grpc.UsersResponse;
@@ -35,16 +36,28 @@ public class UserManagementService implements UserManagement {
     var userDto = userMapper.protoToDomain(request.getUser());
     log.info("createUser invoked: {}", userDto);
 
-    return userService.save(userDto)
+    return Uni.createFrom().deferred(() -> userService.save(userDto))
         .map(user -> UserResponse.newBuilder().setUser(userMapper.toProto(user)).build())
-        .onFailure().recoverWithItem(throwable -> {
-          log.error("createUser::error", throwable);
-          return UserResponse.newBuilder()
-              .setError(Error.newBuilder()
-                  .setCode(Code.INTERNAL.getNumber())
-                  .setMessage(throwable.getMessage())
-                  .build())
-              .build();
-        });
+        .onFailure().recoverWithItem(this::userError);
+  }
+
+  @Override
+  public Uni<UserResponse> updateUser(UpdateUserRequest request) {
+    var userDto = userMapper.protoToDomain(request.getUser());
+    log.info("updateUser invoked: {}", userDto);
+
+    return Uni.createFrom().deferred(() -> userService.update(userDto))
+        .map(user -> UserResponse.newBuilder().setUser(userMapper.toProto(user)).build())
+        .onFailure().recoverWithItem(this::userError);
+  }
+
+  private UserResponse userError(Throwable throwable) {
+    log.error("userError::error", throwable);
+
+    return UserResponse.newBuilder().setError(
+        Error.newBuilder()
+            .setCode(Code.INTERNAL.getNumber())
+            .setMessage(throwable.getMessage())
+            .build()).build();
   }
 }

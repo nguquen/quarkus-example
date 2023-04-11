@@ -11,12 +11,17 @@ package usermanagement;
 service UserManagement {
   rpc getUsers (GetUsersRequest) returns (UsersResponse) {}
   rpc createUser (CreateUserRequest) returns (UserResponse) {}
+  rpc updateUser (UpdateUserRequest) returns (UserResponse) {}
 }
 
 message GetUsersRequest {
 }
 
 message CreateUserRequest {
+  User user = 1;
+}
+
+message UpdateUserRequest {
   User user = 1;
 }
 
