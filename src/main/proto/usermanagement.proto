@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+import "google/rpc/error_details.proto";
+
 option java_multiple_files = true;
 option java_package = "com.leapxpert.usermanagement.grpc";
 option java_outer_classname = "UserManagementProto";
@@ -26,10 +28,18 @@ message User {
   string phone = 5;
 }
 
+message Error {
+  int32 code = 1;
+  string message = 2;
+  repeated google.rpc.ErrorInfo details = 3;
+}
+
 message UserResponse {
   User user = 1;
+  Error error = 2;
 }
 
 message UsersResponse {
   repeated User users = 1;
+  Error error = 2;
 }

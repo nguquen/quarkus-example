@@ -1,6 +1,9 @@
 package com.leapxpert.usermanagement;
 
+import com.google.rpc.Code;
+import com.google.rpc.ErrorInfo;
 import com.leapxpert.usermanagement.grpc.CreateUserRequest;
+import com.leapxpert.usermanagement.grpc.Error;
 import com.leapxpert.usermanagement.grpc.GetUsersRequest;
 import com.leapxpert.usermanagement.grpc.UserManagement;
 import com.leapxpert.usermanagement.grpc.UserResponse;
@@ -9,7 +12,6 @@ import com.leapxpert.usermanagement.service.UserService;
 import com.leapxpert.usermanagement.service.mapper.UserMapper;
 import io.quarkus.grpc.GrpcService;
 import io.smallrye.mutiny.Uni;
-import javax.validation.ConstraintViolationException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,16 +33,16 @@ public class UserManagementService implements UserManagement {
 
   @Override
   public Uni<UserResponse> createUser(CreateUserRequest request) {
-    try {
-      var userDto = userMapper.protoToDomain(request.getUser());
-      log.info("createUser invoked: {}", userDto);
+    var userDto = userMapper.protoToDomain(request.getUser());
+    log.info("createUser invoked: {}", userDto);
 
-      return userService.save(userDto)
-          .map(user -> UserResponse.newBuilder().setUser(userMapper.toProto(user)).build());
-    } catch (ConstraintViolationException e) {
-      log.error("createUser::error", e);
-      //TODO: handle exception
-      return Uni.createFrom().item(() -> UserResponse.newBuilder().build());
-    }
+    return userService.save(userDto)
+        .map(user -> UserResponse.newBuilder().setUser(userMapper.toProto(user)).build())
+        .onFailure().recoverWithItem(throwable -> UserResponse.newBuilder()
+            .setError(Error.newBuilder()
+                .setCode(Code.INTERNAL.getNumber())
+                .setMessage(throwable.getMessage())
+                .build())
+            .build());
   }
 }

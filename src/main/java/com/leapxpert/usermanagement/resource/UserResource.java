@@ -41,6 +41,6 @@ public class UserResource {
   @Path("/{userId}")
   public Uni<Response> update(@PathParam("userId") Integer userId, @NotNull @Valid UserDto userDto) {
     userDto.setId(userId);
-    return userService.save(userDto).map(result -> Response.ok(result).build());
+    return userService.update(userDto).map(result -> Response.ok(result).build());
   }
 }
