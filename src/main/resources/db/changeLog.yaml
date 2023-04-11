@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id:  1
+      author:  thien.le
+      comment: example-comment
+      changes:
+        - createCollection:
+            collectionName:  User

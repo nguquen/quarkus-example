@@ -37,11 +37,14 @@ public class UserManagementService implements UserManagement {
 
     return userService.save(userDto)
         .map(user -> UserResponse.newBuilder().setUser(userMapper.toProto(user)).build())
-        .onFailure().recoverWithItem(throwable -> UserResponse.newBuilder()
-            .setError(Error.newBuilder()
-                .setCode(Code.INTERNAL.getNumber())
-                .setMessage(throwable.getMessage())
-                .build())
-            .build());
+        .onFailure().recoverWithItem(throwable -> {
+          log.error("createUser::error", throwable);
+          return UserResponse.newBuilder()
+              .setError(Error.newBuilder()
+                  .setCode(Code.INTERNAL.getNumber())
+                  .setMessage(throwable.getMessage())
+                  .build())
+              .build();
+        });
   }
 }
