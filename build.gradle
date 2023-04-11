@@ -41,6 +41,7 @@ dependencies {
     // test
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
+    testImplementation 'io.quarkus:quarkus-junit5-mockito'
 
     // gatling
     gatling group: 'com.github.phisgr', name: 'gatling-grpc', version: "$gatlingGrpcVersion"
