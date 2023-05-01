@@ -15,13 +15,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Path("/v1/users")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @AllArgsConstructor
-@Slf4j
 public class UserResource {
 
   private final UserService userService;
@@ -38,8 +36,7 @@ public class UserResource {
 
   @PUT
   @Path("/{userId}")
-  public Uni<Response> update(@PathParam("userId") String userId,
-      @NotNull @Valid UserDto userDto) {
+  public Uni<Response> update(@PathParam("userId") String userId, @NotNull @Valid UserDto userDto) {
     userDto.setId(userId);
     return userService.update(userDto).map(result -> Response.ok(result).build());
   }
